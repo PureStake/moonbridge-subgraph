@@ -1,0 +1,26 @@
+{
+  "name": "moonbridge-subgraph",
+  "description": "Subgraph to monitor the bridges on Moonbeam",
+  "license": "GPL-3.0-or-later",
+  "version": "0.1.0",
+  "scripts": {
+    "codegen": "node_modules/.bin/graph codegen --output-dir src/types/",
+    "build": "node_modules/.bin/graph build",
+    "create-local": "node_modules/.bin/graph create PureStake/moonbridge-dev --node http://127.0.0.1:8020",
+    "create-staging": "node_modules/.bin/graph create mario-purestake/moonbridge-moonbase --node https://api.staging.thegraph.com/deploy/",
+    "deploy-local": "node_modules/.bin/graph deploy PureStake/moonbridge-dev --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "deploy-staging": "node_modules/.bin/graph deploy mario-purestake/moonbridge-moonbase --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
+    "deploy": "node_modules/.bin/graph deploy mario-purestake/moonbridge-moonbase --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.20.1",
+    "@graphprotocol/graph-ts": "^0.20.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
+  },
+  "resolutions": {
+    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6"
+  }
+}

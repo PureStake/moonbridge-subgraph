@@ -1,0 +1,77 @@
+# Copyright 2019-2021 PureStake Inc.
+# This file is part of Moonbridge-Subgraph.
+
+# Moonbridge-Subgraph is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Moonbridge-Subgraph is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Moonbridge-Subgraph.  If not, see <http://www.gnu.org/licenses/>.
+
+type Relayer @entity {
+  id: ID! # address of relayer
+  address: Bytes!
+  votes: [Vote!] @derivedFrom(field: "relayer")
+  voteCount: BigInt!
+  createdProposals: [Proposal!] @derivedFrom(field: "createdBy")
+  passedProposals: [Proposal!] @derivedFrom(field: "passedBy")
+  executedProposals: [Proposal!] @derivedFrom(field: "executedBy")
+  cancelledProposals: [Proposal!] @derivedFrom(field: "cancelledBy")
+  
+  addedAt: BigInt # timestamp
+  addedAtBlock: BigInt # block number
+}
+
+type Deposit @entity {
+  id: ID! # originChainId + destinationChainId + nonce
+  originChainId: Int!
+  destinationChainId: Int!
+  resourceId: Bytes!
+  nonce: BigInt!
+  proposal: Proposal
+  
+  createdAt: BigInt! # timestamp
+}
+
+type Proposal @entity {
+  id: ID! # originChainId + destinationChainId + nonce
+  deposit: Deposit! @derivedFrom(field: "proposal")
+  originChainId: Int!
+  destinationChainId: Int!
+  resourceId: Bytes!
+  status: String!
+  dataHash: Bytes!
+  createdBy: Relayer
+  passedBy: Relayer
+  executedBy: Relayer
+  cancelledBy: Relayer
+  votes: [Vote!] @derivedFrom(field: "proposal")
+  
+  createdAt: BigInt! # timestamp
+  passedAt: BigInt # timestamp
+  executedAt: BigInt # timestamp  
+  cancelledAt: BigInt # timestamp
+}
+
+type Vote @entity {
+  id: ID! # originChainId + destinationChainId + nonce + relayerAddress
+  relayer: Relayer!
+  proposal: Proposal!
+  isYesVote: Boolean!
+  isNoVote: Boolean!
+  
+  votedAt: BigInt! # timestamp
+}
+
+type ProposalCount @entity {
+  id: ID! # originChainId + destinationChainId
+  originChainId: Int!
+  destinationChainId: Int!
+  proposalCount: BigInt!
+}

@@ -1,0 +1,63 @@
+# Copyright 2019-2021 PureStake Inc.
+# This file is part of Moonbridge-Subgraph.
+
+# Moonbridge-Subgraph is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Moonbridge-Subgraph is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Moonbridge-Subgraph.  If not, see <http://www.gnu.org/licenses/>.
+
+# Last 100 proposals of the current network and the votes they had
+{
+  proposals(first: 100) {
+    deposit {
+      originChainId
+      destinationChainId
+      resourceId
+    }
+    status
+    createdAt
+    passedAt
+    executedAt
+    votes {
+      relayer { address }
+      votedAt
+    }
+  }
+}
+
+# Any cancelled proposals?
+{
+  proposals(first: 100, where: {status: "Cancelled"}) {
+    deposit {
+      originChainId
+      destinationChainId
+      resourceId
+    }
+    cancelledAt
+  }
+}
+
+
+# Historic votes data of an specific relayer
+{
+  relayers (where: {address: "0x095748e076ac7cec8677c7a73118f42c03500c1a"}) {
+    address
+    addedAt
+    isActive
+    votes (first: 100) {
+      proposal { 
+        id
+        createdAt
+      }
+      votedAt
+    }
+  }
+}

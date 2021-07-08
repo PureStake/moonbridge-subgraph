@@ -1,0 +1,52 @@
+# Copyright 2019-2021 PureStake Inc.
+# This file is part of Moonbridge-Subgraph.
+
+# Moonbridge-Subgraph is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Moonbridge-Subgraph is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Moonbridge-Subgraph.  If not, see <http://www.gnu.org/licenses/>.
+
+specVersion: 0.0.2
+description: Subgraph to monitor the bridges on Moonbeam
+repository: https://github.com/PureStake/moonbridge-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Bridge
+    network: mbase
+    source:
+      address: '0x638285E837Db7124FF0947251c6f20ceEb2645DF'
+      abi: Bridge
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Player
+        - Round
+        - Ticket
+      abis:
+        - name: Bridge
+          file: ./artifacts/contracts/Bridge.sol/Bridge.json
+      eventHandlers:
+        - event: RelayerAdded(indexed address)
+          handler: handleAddRelayer
+        - event: RelayerRemoved(indexed address)
+          handler: handleRemoveRelayer
+        - event: Deposit(indexed uint8,indexed bytes32,indexed uint64)
+          handler: handleNewDeposit
+        - event: ProposalEvent(indexed uint8,indexed uint64,indexed uint8,bytes32,bytes32)
+          handler: handleProposalEvent
+        - event: ProposalVote(indexed uint8,indexed uint64,indexed uint8,bytes32)
+          handler: handleProposalVote
