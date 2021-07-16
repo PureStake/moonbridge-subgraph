@@ -18,28 +18,32 @@ specVersion: 0.0.2
 description: Subgraph to monitor the bridges on Moonbeam
 repository: https://github.com/PureStake/moonbridge-subgraph
 schema:
-  file: ../schema.graphql
+  file: ../../schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: Bridge
-    network: kovan
+    network: rinkeby
     source:
       address: '0x638285E837Db7124FF0947251c6f20ceEb2645DF'
       abi: Bridge
-      startBlock:  25101423
+      startBlock: 8660132
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ../src/mapping.ts
+      file: ../../src/mapping.ts
       entities:
-        - Player
-        - Round
-        - Ticket
+        - Relayer
+        - Deposit
+        - Proposal
+        - Vote
+        - ProposalCount
       abis:
         - name: Bridge
-          file: ../artifacts/contracts/Bridge.sol/Bridge.json
+          file: ../../artifacts/contracts/Bridge.sol/Bridge.json
       eventHandlers:
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
         - event: RelayerAdded(indexed address)
           handler: handleAddRelayer
         - event: RelayerRemoved(indexed address)

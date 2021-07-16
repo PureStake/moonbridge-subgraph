@@ -21,6 +21,7 @@ import {
   ProposalEvent,
   Bridge,
   ProposalVote,
+  RoleGranted,
 } from "./types/Bridge/Bridge";
 import { Relayer, Deposit, Proposal, Vote, ProposalCount } from "./types/schema";
 import { BigInt, log, store } from "@graphprotocol/graph-ts";
@@ -53,6 +54,47 @@ export function handleAddRelayer(event: RelayerAdded): void {
   // Save the new relayer record
   relayer.save();
 }
+
+/**
+ * Handles the event where a relayer is added to the bridge
+ * contract, creating (or updating) a relayer record accordingly
+ * @param event
+ */
+ export function handleRoleGranted(event: RoleGranted): void {
+  // We connect to the bridge contract on-chain to read the
+  // RelayerRole, which is a public property of the contract
+  let bridgeContract = Bridge.bind(event.address);
+  let relayerRole = bridgeContract.RELAYER_ROLE();
+  
+  // We get the role assigned on the contract
+  let role = event.params.role;
+
+  // If the role is not a relayer, no need to process -> exit
+  if (!relayerRole.equals(role)) return;
+
+  // The ID of a relayer is its address in hexadecimal format
+  let relayerId = event.params.account.toHex();
+
+  // The relayer may have been added (and removed) previously
+  let relayer = Relayer.load(relayerId);
+  if (relayer == null) {
+    // If not, create the record
+    relayer = new Relayer(relayerId);
+  }
+
+  // Set the properties from the event data
+  relayer.address = event.params.account;
+  relayer.addedAt = event.block.timestamp;
+  relayer.addedAtBlock = event.block.number;
+  relayer.voteCount = BigInt.fromI32(0);
+
+  // Debug the processing
+  log.debug("RoleGranted (RelayerAdded). Relayer {}", [relayerId]);
+
+  // Save the new relayer record
+  relayer.save();
+}
+
 
 /**
  * Handles the event where a relayer is removed to the bridge
