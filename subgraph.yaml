@@ -33,13 +33,17 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mapping.ts
       entities:
-        - Player
-        - Round
-        - Ticket
+        - Relayer
+        - Deposit
+        - Proposal
+        - Vote
+        - ProposalCount
       abis:
         - name: Bridge
           file: ./artifacts/contracts/Bridge.sol/Bridge.json
       eventHandlers:
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
         - event: RelayerAdded(indexed address)
           handler: handleAddRelayer
         - event: RelayerRemoved(indexed address)
