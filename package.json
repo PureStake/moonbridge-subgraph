@@ -13,7 +13,7 @@
     "deploy": "node_modules/.bin/graph deploy mario-purestake/moonbridge-moonbase --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.20.1",
+    "@graphprotocol/graph-cli": "^0.21.0",
     "@graphprotocol/graph-ts": "^0.20.0"
   },
   "dependencies": {
